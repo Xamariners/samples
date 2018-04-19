@@ -1,5 +1,7 @@
-﻿using FlightFinder.Shared;
+﻿
+using FlightFinder.Shared;
 using Microsoft.AspNetCore.Blazor;
+using Microsoft.AspNetCore.Blazor.Browser.Interop;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -22,19 +24,34 @@ namespace FlightFinder.Client.Services
 
         // Receive 'http' instance from DI
         private readonly HttpClient http;
-        public AppState(HttpClient httpInstance)
+        private readonly HistoryService historyService;
+        private readonly AirlineService airlineService;
+
+        public AppState(HttpClient httpInstance, HistoryService historyServiceInstance, AirlineService airlineServiceInstance)
         {
             http = httpInstance;
+            historyService = historyServiceInstance;
+            airlineService = airlineServiceInstance;
         }
 
         public async Task Search(SearchCriteria criteria)
         {
             SearchInProgress = true;
             NotifyStateChanged();
-
-            SearchResults = await http.PostJsonAsync<Itinerary[]>("/api/flightsearch", criteria);
-            SearchInProgress = false;
-            NotifyStateChanged();
+            try
+            {
+                historyService.AddToHistoryList(criteria);
+                SearchResults = await airlineService.Search(criteria);               
+            }
+            catch(Exception ex)
+            {
+                RegisteredFunction.Invoke<object>("Alert", ex.Message);
+            }
+            finally
+            {
+                SearchInProgress = false;
+                NotifyStateChanged();
+            }           
         }
 
         public void AddToShortlist(Itinerary itinerary)
@@ -52,3 +69,4 @@ namespace FlightFinder.Client.Services
         private void NotifyStateChanged() => OnChange?.Invoke();
     }
 }
+

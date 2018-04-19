@@ -1,4 +1,8 @@
 ﻿@inject AppState state
+@inject HistoryService historyService
+@addTagHelper *, BlazorExtensions
+
+<BlazorExtensionScripts></BlazorExtensionScripts>
 
 <div id="search-and-results-area">
     <div id="search-area" class="px-2 py-3">
@@ -14,12 +18,14 @@
 <div id="selections-area" class="p-3 pl-4">
     <Shortlist Itineraries=state.Shortlist
                OnRemoveItinerary=state.RemoveFromShortlist />
+    <SearchHistory SearchHistoryList="historyService.SearchHistoryList" />
 </div>
-
 @functions
 {
-    protected override void OnInit()
-    {
-        state.OnChange += StateHasChanged;
-    }
+protected override void OnInit()
+{
+    // fires component re-rendering
+    state.OnChange += StateHasChanged;
+    historyService.OnChange += StateHasChanged;
+}
 }
