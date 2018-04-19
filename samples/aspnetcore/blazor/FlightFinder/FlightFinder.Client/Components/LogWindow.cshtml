@@ -1,0 +1,15 @@
+﻿@foreach (var log in LogList.Reverse())
+{
+<ul class="list-group mb-4">
+    <li class="list-group-item justify-content-between">
+        <div>
+            <nobr>@log</nobr>           
+        </div>
+    </li>
+</ul>
+}
+
+@functions
+{
+    public ICollection<string> LogList { get; set; }
+}

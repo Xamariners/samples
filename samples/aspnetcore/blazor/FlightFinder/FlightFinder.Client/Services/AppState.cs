@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Browser.Interop;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -18,6 +19,9 @@ namespace FlightFinder.Client.Services
         private readonly List<Itinerary> shortlist = new List<Itinerary>();
         public IReadOnlyList<Itinerary> Shortlist => shortlist;
 
+        private readonly List<string> logs = new List<string>();
+        public IReadOnlyList<string> Logs => logs;
+
         // Lets components receive change notifications
         // Could have whatever granularity you want (more events, hierarchy...)
         public event Action OnChange;
@@ -31,7 +35,7 @@ namespace FlightFinder.Client.Services
         {
             http = httpInstance;
             historyService = historyServiceInstance;
-            airlineService = airlineServiceInstance;
+            airlineService = airlineServiceInstance;          
         }
 
         public async Task Search(SearchCriteria criteria)
@@ -40,8 +44,12 @@ namespace FlightFinder.Client.Services
             NotifyStateChanged();
             try
             {
+                AddToLog(criteria.FromAirport + DateTime.Now.ToString());
+
+                AddToLog(string.Join(";", historyService.SearchHistoryList.Select(x => x.FromAirport)));
+                
+                SearchResults = await airlineService.Search(criteria);
                 historyService.AddToHistoryList(criteria);
-                SearchResults = await airlineService.Search(criteria);               
             }
             catch(Exception ex)
             {
@@ -52,6 +60,12 @@ namespace FlightFinder.Client.Services
                 SearchInProgress = false;
                 NotifyStateChanged();
             }           
+        }
+
+        public void AddToLog(String log)
+        {
+            logs.Add(log);
+            NotifyStateChanged();
         }
 
         public void AddToShortlist(Itinerary itinerary)

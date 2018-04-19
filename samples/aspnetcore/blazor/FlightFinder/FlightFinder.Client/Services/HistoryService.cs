@@ -8,7 +8,7 @@ namespace FlightFinder.Client.Services
 {
     public class HistoryService
     {
-        private readonly List<SearchCriteria> searchHistoryList = new List<SearchCriteria>();
+        private List<SearchCriteria> searchHistoryList = new List<SearchCriteria>();
       
         public IReadOnlyList<SearchCriteria> SearchHistoryList => searchHistoryList;
 
@@ -19,9 +19,9 @@ namespace FlightFinder.Client.Services
         public void AddToHistoryList(SearchCriteria criteria)
         {
             searchHistoryList.Add(criteria);
-            NotifyStateChanged();
+            //NotifyStateChanged();
         }
 
-        public void NotifyStateChanged() => OnChange?.Invoke();
+        // void NotifyStateChanged() => OnChange?.Invoke();
     }
 }

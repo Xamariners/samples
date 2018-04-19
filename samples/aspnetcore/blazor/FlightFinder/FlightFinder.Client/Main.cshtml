@@ -12,20 +12,23 @@
         <GreyOutZone IsGreyedOut=state.SearchInProgress>
             <SearchResults Itineraries=state.SearchResults
                            OnAddItinerary=state.AddToShortlist />
+            <LogWindow LogList="state.Logs"/>
         </GreyOutZone>
     </div>
 </div>
 <div id="selections-area" class="p-3 pl-4">
     <Shortlist Itineraries=state.Shortlist
                OnRemoveItinerary=state.RemoveFromShortlist />
+
     <SearchHistory SearchHistoryList="historyService.SearchHistoryList" />
 </div>
+
 @functions
 {
-protected override void OnInit()
-{
-    // fires component re-rendering
-    state.OnChange += StateHasChanged;
-    historyService.OnChange += StateHasChanged;
-}
+    protected override void OnInit()
+    {
+        // fires component re-rendering
+        state.OnChange += StateHasChanged;
+        historyService.OnChange += StateHasChanged;
+    }
 }

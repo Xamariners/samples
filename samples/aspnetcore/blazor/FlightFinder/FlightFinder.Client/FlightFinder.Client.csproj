@@ -19,4 +19,8 @@
     <BlazorGenerate Remove="Components\SearchHistory.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <BlazorGenerate Remove="Components\LogWindow.cshtml" />
+  </ItemGroup>
+
 </Project>
